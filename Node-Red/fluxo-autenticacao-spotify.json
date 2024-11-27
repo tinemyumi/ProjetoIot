@@ -1,0 +1,85 @@
+[
+    {
+        "id": "5a78f4f92f810800",
+        "type": "inject",
+        "z": "aec8441d76db9b8c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 120,
+        "wires": [
+            [
+                "a7495fdf40757ab5"
+            ]
+        ]
+    },
+    {
+        "id": "a7495fdf40757ab5",
+        "type": "oauth2",
+        "z": "aec8441d76db9b8c",
+        "name": "",
+        "container": "oauth2Response",
+        "grant_type": "authorization_code",
+        "access_token_url": "https://accounts.spotify.com/api/token",
+        "authorization_endpoint": "https://accounts.spotify.com/authorize",
+        "redirect_uri": "http://127.0.0.1:1880/oauth2/redirect",
+        "open_authentication": "AQAopOMgVTAlaT63v3R0UdcSUbNsLvSEi_KlR08iZ6cNrt4R7029yifSEX1P5xBMZVnCEQJQQalRlZHng7xq8NILWNZAq1_Ezaln21dMfgt2u_gp8pGyY-m9jhh6XpDpq_YWvC1ngTYODOstOA14R0LgEcF5SJcm8c8qraPIeBPuxQXDD4nKWw8VdWzT3gVS83laNc3zBAWGYrrH5qp8wvRYpg",
+        "username": "",
+        "password": "",
+        "client_id": "eb7371a490c84a5f8dc17d486fc61f58",
+        "client_secret": "3cbc709615ff46929eeed7ba2272c694",
+        "response_type": "",
+        "access_type": "",
+        "refresh_token": "",
+        "prompt": "",
+        "scope": "user-read-playback-state ",
+        "resource": "",
+        "state": "",
+        "proxy": "",
+        "debug": false,
+        "force": false,
+        "senderr": false,
+        "client_credentials_in_body": false,
+        "rejectUnauthorized": true,
+        "headers": {},
+        "x": 430,
+        "y": 120,
+        "wires": [
+            [
+                "bca6c54ae83791a0"
+            ]
+        ]
+    },
+    {
+        "id": "bca6c54ae83791a0",
+        "type": "debug",
+        "z": "aec8441d76db9b8c",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "oauth2Response",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 100,
+        "wires": []
+    }
+]

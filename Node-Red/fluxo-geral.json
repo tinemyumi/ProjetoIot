@@ -1,0 +1,337 @@
+[
+    {
+        "id": "aec8441d76db9b8c",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "4be07c57663e647c",
+        "type": "mqtt-broker",
+        "name": "test.mosquitto.org",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "af2d9e069fecb9a1",
+        "type": "node-red-contrib-whatsapp-cmb-account",
+        "name": "Yumi"
+    },
+    {
+        "id": "59ec0e929178e917",
+        "type": "node-red-contrib-whatsapp-cmb-account",
+        "name": "Paulo"
+    },
+    {
+        "id": "60eead3aa544e988",
+        "type": "influxdb",
+        "hostname": "http://localhost:8086",
+        "port": "8086",
+        "protocol": "http",
+        "database": "database",
+        "name": "projetoIoT",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "https://us-east-1-1.aws.cloud2.influxdata.com",
+        "timeout": "10",
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "e665c75ebb221323",
+        "type": "node-red-contrib-whatsapp-cmb-account",
+        "name": "Yumi"
+    },
+    {
+        "id": "5a78f4f92f810800",
+        "type": "inject",
+        "z": "aec8441d76db9b8c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 120,
+        "wires": [
+            [
+                "a7495fdf40757ab5"
+            ]
+        ]
+    },
+    {
+        "id": "a7495fdf40757ab5",
+        "type": "oauth2",
+        "z": "aec8441d76db9b8c",
+        "name": "",
+        "container": "oauth2Response",
+        "grant_type": "authorization_code",
+        "access_token_url": "https://accounts.spotify.com/api/token",
+        "authorization_endpoint": "https://accounts.spotify.com/authorize",
+        "redirect_uri": "http://127.0.0.1:1880/oauth2/redirect",
+        "open_authentication": "AQAopOMgVTAlaT63v3R0UdcSUbNsLvSEi_KlR08iZ6cNrt4R7029yifSEX1P5xBMZVnCEQJQQalRlZHng7xq8NILWNZAq1_Ezaln21dMfgt2u_gp8pGyY-m9jhh6XpDpq_YWvC1ngTYODOstOA14R0LgEcF5SJcm8c8qraPIeBPuxQXDD4nKWw8VdWzT3gVS83laNc3zBAWGYrrH5qp8wvRYpg",
+        "username": "",
+        "password": "",
+        "client_id": "eb7371a490c84a5f8dc17d486fc61f58",
+        "client_secret": "3cbc709615ff46929eeed7ba2272c694",
+        "response_type": "",
+        "access_type": "",
+        "refresh_token": "",
+        "prompt": "",
+        "scope": "user-read-playback-state ",
+        "resource": "",
+        "state": "",
+        "proxy": "",
+        "debug": false,
+        "force": false,
+        "senderr": false,
+        "client_credentials_in_body": false,
+        "rejectUnauthorized": true,
+        "headers": {},
+        "x": 430,
+        "y": 120,
+        "wires": [
+            [
+                "bca6c54ae83791a0"
+            ]
+        ]
+    },
+    {
+        "id": "7d60c684e2086e6a",
+        "type": "function",
+        "z": "aec8441d76db9b8c",
+        "name": "autorizaAcessoApi",
+        "func": "// Converte o payload do MQTT para um número e valida o BPM\nmsg.bpm = parseInt(msg.payload);\n\n// Verifica se o BPM está elevado\nif (msg.bpm > 100) {\n    node.warn(`BPM elevado: ${msg.bpm}. Continuando o fluxo...`);\n\n    // Requisição para buscar playlists\n    msg.url = \"https://api.spotify.com/v1/search?q=rock&type=playlist\"; // Pesquisando por playlists que tenham os dois termos\n    msg.method = \"GET\";  // Método GET para buscar dados da API\n\n    // Definir o token de autorização no cabeçalho da requisição\n    msg.headers = {\n        Authorization: `Bearer ${global.get(\"spotify_access_token\")}`  // Usando o token global do Spotify\n    };\n\n    return msg; // Prossegue para o nó HTTP Request\n} else {\n    node.warn(`BPM normal (${msg.bpm}). Fluxo encerrado.`);\n    return null; // Interrompe o fluxo caso o BPM seja normal\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 420,
+        "wires": [
+            [
+                "50b48a4b856bdfe7"
+            ]
+        ]
+    },
+    {
+        "id": "50b48a4b856bdfe7",
+        "type": "http request",
+        "z": "aec8441d76db9b8c",
+        "name": "",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1120,
+        "y": 420,
+        "wires": [
+            [
+                "f1a0fb61772f255a"
+            ]
+        ]
+    },
+    {
+        "id": "bca6c54ae83791a0",
+        "type": "debug",
+        "z": "aec8441d76db9b8c",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "oauth2Response",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "f1a0fb61772f255a",
+        "type": "function",
+        "z": "aec8441d76db9b8c",
+        "name": "trataMensagemWhatsApp",
+        "func": "// Verifica se msg.payload é um objeto ou uma string JSON\nlet response;\n\nif (typeof msg.payload === \"string\") {\n    // Se for uma string JSON, faz o parse\n    response = JSON.parse(msg.payload);\n} else {\n    // Caso já seja um objeto, apenas usa ele diretamente\n    response = msg.payload;\n}\n\n// Verifica se existem playlists na resposta\nif (response.playlists && response.playlists.items.length > 0) {\n    let playlist = response.playlists.items[0]; // Pega a primeira playlist\n    let playlistLink = playlist.external_urls.spotify; // Link externo da playlist\n\n    // Formata a mensagem do WhatsApp\n    msg.payload = `Seu nível de BPM é: ${msg.bpm}. Vamos escutar uma música e relaxar! 🎶\\nAqui está uma playlist para você: ${playlistLink}`;\n    \n    return msg;  // Prossegue para o nó que envia a mensagem ao WhatsApp\n} else {\n    node.warn(\"Nenhuma playlist encontrada.\");\n    return null;  // Não prossegue se não encontrar playlist\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1350,
+        "y": 440,
+        "wires": [
+            [
+                "9a547b44dd47b025"
+            ]
+        ]
+    },
+    {
+        "id": "9a547b44dd47b025",
+        "type": "node-red-contrib-whatsapp-cmb-send-message",
+        "z": "aec8441d76db9b8c",
+        "name": "",
+        "credtype": "account",
+        "account": "e665c75ebb221323",
+        "text": "payload",
+        "phonenumbervalue": "",
+        "apikeyvalue": "",
+        "apikeyinputtypemessage": "msg",
+        "phonenumberinputtypemessage": "msg",
+        "inputtypemessage": "msg",
+        "rejectssl": false,
+        "x": 1500,
+        "y": 320,
+        "wires": [
+            [
+                "9e2bb0fc4f1faff7"
+            ]
+        ]
+    },
+    {
+        "id": "9e2bb0fc4f1faff7",
+        "type": "debug",
+        "z": "aec8441d76db9b8c",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1750,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "484d527654f4faf6",
+        "type": "mqtt in",
+        "z": "aec8441d76db9b8c",
+        "name": "SensorPulso",
+        "topic": "SensorPulso",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "4be07c57663e647c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 520,
+        "wires": [
+            [
+                "da816062fd5e0247",
+                "3f20e2758fca80a1"
+            ]
+        ]
+    },
+    {
+        "id": "da816062fd5e0247",
+        "type": "function",
+        "z": "aec8441d76db9b8c",
+        "name": "convertePayloadBpm",
+        "func": "// Converte o payload do MQTT para um número e valida o BPM\nmsg.bpm = parseInt(msg.payload); // Ajuste conforme o formato do dado recebido no MQTT\n\nif (msg.bpm > 100) {\n    node.warn(`BPM elevado: ${msg.bpm}. Continuando o fluxo...`);\n    return msg; // Prossegue para o próximo nó\n} else {\n    node.warn(`BPM normal (${msg.bpm}). Fluxo encerrado.`);\n    return null; // Interrompe o fluxo\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 420,
+        "wires": [
+            [
+                "997661a00c3ae2e1"
+            ]
+        ]
+    },
+    {
+        "id": "3f20e2758fca80a1",
+        "type": "influxdb out",
+        "z": "aec8441d76db9b8c",
+        "influxdb": "60eead3aa544e988",
+        "name": "SensorPulsoInfluxDb",
+        "measurement": "SensorPulso",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "c1966b72f6ef9d50",
+        "bucket": "bucket_data",
+        "x": 360,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "997661a00c3ae2e1",
+        "type": "function",
+        "z": "aec8441d76db9b8c",
+        "name": "variavel_global_token",
+        "func": "global.set(\"spotify_access_token\", \"BQAESVBffsC2FgQUrfgr-0fDF2QzxBndDohieoYNxxQcbuyASTJExqQNRPpf4ypf5yJMmjPr5tfbS47MR5J2FVwbR_WSj6VkZoTCdXzr6jp7K-2CcE5dOxJIWVPNaWh5hIvA9601mijDdyeRS90VQ7eeRz2o6A5osuAlJnxC3OpGmN3nzNuGBfuX_cPSzMS5jw\");\nreturn msg;  // Prossegue para o próximo nó\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 420,
+        "wires": [
+            [
+                "7d60c684e2086e6a"
+            ]
+        ]
+    }
+]
